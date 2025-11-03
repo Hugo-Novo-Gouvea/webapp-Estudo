@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <title>Clientes</title>
+</head>
+<body>
+  <h1>Clientes</h1>
+  <table border="1" id="tb">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Nome</th>
+        <th>CPF</th>
+        <th>Telefone</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <script>
+    fetch('/api/clientes')
+      .then(r => r.json())
+      .then(clientes => {
+        const tbody = document.querySelector('#tb tbody');
+        clientes.forEach(c => {
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td>${c.id}</td>
+            <td>${c.nome}</td>
+            <td>${c.cpf ?? ''}</td>
+            <td>${c.telefone ?? ''}</td>
+          `;
+          tbody.appendChild(tr);
+        });
+      });
+  </script>
+</body>
+</html>
