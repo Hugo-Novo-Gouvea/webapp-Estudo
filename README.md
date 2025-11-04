@@ -1,4 +1,4 @@
-# WebAppEstudo
+# WebApp-Estudo
 
 Projeto de estudo para criar um **web app local** (arquitetura híbrida) usando ASP.NET Core + SQL Server Express.  
 A ideia é: o back-end roda na máquina (Kestrel) e serve páginas web (`wwwroot`) que consomem uma API (`/api/clientes`) ligada ao banco criado no SSMS.
@@ -185,5 +185,6 @@ Acessar no navegador:
 http://localhost:<porta>/
 
 http://localhost:<porta>/clientes.html
+
 
 http://localhost:<porta>/api/clientes
