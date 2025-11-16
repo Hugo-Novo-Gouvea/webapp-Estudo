@@ -207,6 +207,11 @@
       }
     },
 
+    onNew() {
+      clearNewForm();
+      openModal(els.newBackdrop);
+    },
+
     async onDelete(id) {
       if (!confirm('Deseja realmente excluir este cliente?')) return;
       try {
@@ -302,6 +307,7 @@
         throw new Error(txt || 'Erro ao criar cliente.');
       }
       closeModal(els.newBackdrop);
+      clearNewForm();
       list.state.page = 1;
       await list.loadPage();
     } catch (err) {
