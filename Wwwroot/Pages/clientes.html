@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <title>Clientes - Farmácia Eliseu</title>
+  <link rel="stylesheet" href="/css/bootstrap.min.css">
+  <link rel="stylesheet" href="/css/custom.css">
+</head>
+<body class="app-body app-body-gradient">
+  <main class="app-main">
+    <div class="container">
+      <div class="list-shell">
+        <!-- titulo -->
+        <div class="mb-3">
+          <h2 class="h5 mb-1">Lista de clientes</h2>
+          <p class="text-muted" style="font-size:.7rem;">cadastro de clientes para vincular vendas e contas</p>
+        </div>
+
+        <!-- barra de acoes -->
+        <div class="action-bar">
+          <button id="btn-view" class="action-btn primary" disabled>🔍 Visualizar</button>
+          <button id="btn-edit" class="action-btn primary" disabled>✏️ Editar</button>
+          <button id="btn-new" class="action-btn success" disabled>➕ Novo</button>
+          <button id="btn-delete" class="action-btn danger" disabled>🗑️ Excluir</button>
+        </div>
+
+        <!-- filtros -->
+        <div class="list-filter">
+          <div class="list-filter-action">
+            <a href="/" class="btn-modern small">⬅️ Menu</a>
+          </div>
+          <div class="list-filter-field">
+            <label for="filter-column">Coluna</label>
+            <select id="filter-column">
+              <option value="id">ID</option>
+              <option value="nome">Nome</option>
+              <option value="endereco">Endereço</option>
+              <option value="idade">Idade</option>
+              <option value="telefone">Telefone</option>
+            </select>
+          </div>
+          <div class="list-filter-input">
+            <label for="filter-text">Pesquisa</label>
+            <input id="filter-text" type="text" placeholder="Digite para filtrar..." />
+          </div>
+        </div>
+
+        <!-- tabela -->
+        <div class="table-shell">
+          <div class="table-responsive app-table-wrapper">
+            <table class="table-modern" id="tb-clientes">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Nome</th>
+                  <th>Endereço</th>
+                  <th>Idade</th>
+                  <th>Telefone</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td colspan="5" class="text-center text-muted">Carregando...</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="table-pager">
+            <div class="table-pager-info" id="clientes-pg-info">Mostrando 0-0 de 0</div>
+            <div class="table-pager-group">
+              <button class="pager-btn is-disabled" id="clientes-pg-prev"><span>⬅️</span><span>Anterior</span></button>
+              <button class="pager-btn is-disabled" id="clientes-pg-next"><span>Próxima</span><span>➡️</span></button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- modal visualizar -->
+    <div class="app-modal-backdrop" id="cliente-modal-backdrop">
+      <div class="app-modal">
+        <div class="app-modal-header">
+          <h2 class="h6 mb-0" id="modal-title">Detalhes do cliente</h2>
+          <button type="button" class="app-modal-close" id="modal-close-btn">&times;</button>
+        </div>
+        <div class="app-modal-body">
+          <dl class="app-modal-dl">
+            <div><dt>ID</dt><dd id="m-id"></dd></div>
+            <div><dt>Nome</dt><dd id="m-nome"></dd></div>
+            <div><dt>Endereco</dt><dd id="m-endereco"></dd></div>
+            <div><dt>Idade</dt><dd id="m-idade"></dd></div>
+            <div><dt>Telefone</dt><dd id="m-telefone"></dd></div>
+          </dl>
+        </div>
+      </div>
+    </div>
+
+    <!-- modal editar -->
+    <div class="app-modal-backdrop" id="cliente-edit-backdrop">
+      <div class="app-modal">
+        <div class="app-modal-header">
+          <h2 class="h6 mb-0">Editar cliente</h2>
+          <button type="button" class="app-modal-close" id="edit-close-btn">&times;</button>
+        </div>
+        <div class="app-modal-body">
+          <form id="edit-form" class="edit-form-grid">
+            <input type="hidden" id="e-id" />
+
+            <label>
+              <span>Nome *</span>
+              <input type="text" id="e-nome" class="form-control form-control-sm" required />
+            </label>
+
+            <label>
+              <span>Endereco</span>
+              <input type="text" id="e-endereco" class="form-control form-control-sm" />
+            </label>
+
+            <label>
+              <span>Idade</span>
+              <input type="number" id="e-idade" class="form-control form-control-sm mask-rg" />
+            </label>
+
+            <label>
+              <span>Telefone</span>
+              <input type="text" id="e-telefone" class="form-control form-control-sm" />
+            </label>
+
+            <div class="modal-actions">
+              <button type="button" class="btn-modern secondary" id="edit-cancel-btn">Cancelar</button>
+              <button type="submit" class="btn-modern primary">Salvar</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- modal novo -->
+    <div class="app-modal-backdrop" id="cliente-new-backdrop">
+      <div class="app-modal">
+        <div class="app-modal-header">
+          <h2 class="h6 mb-0">Novo cliente</h2>
+          <button type="button" class="app-modal-close" id="new-close-btn">&times;</button>
+        </div>
+        <div class="app-modal-body">
+          <form id="new-form" class="edit-form-grid">
+            
+            <label>
+              <span>Nome *</span>
+              <input type="text" id="n-nome" class="form-control form-control-sm" required />
+            </label>
+
+            <label>
+              <span>Endereco</span>
+              <input type="text" id="n-endereco" class="form-control form-control-sm" />
+            </label>
+
+            <label>
+              <span>Idade</span>
+              <input type="number" id="n-idade" class="form-control form-control-sm mask-rg" />
+            </label>
+
+            <label>
+              <span>Telefone</span>
+              <input type="text" id="n-telefone" class="form-control form-control-sm" />
+            </label>
+
+            <div class="modal-actions">
+              <button type="button" class="btn-modern secondary" id="new-cancel-btn">Cancelar</button>
+              <button type="submit" class="btn-modern primary">Salvar</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script src="/js/crudList.js"></script>
+  <script src="/js/clientes.js"></script>
+</body>
+</html>
