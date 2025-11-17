@@ -1,81 +1,55 @@
 using Microsoft.EntityFrameworkCore;
 using WebAppEstudo.Data;
+using WebAppEstudo.Endpoints;
 
+// ========================================
+// CONFIGURAÇÃO DO BUILDER
+// ========================================
+
+// O WebApplicationBuilder é usado para configurar os serviços e a aplicação antes de construí-la.
 var builder = WebApplication.CreateBuilder(args);
 
-// pega a connection string do appsettings
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+// Obtém a connection string do arquivo de configuração (appsettings.json ou User Secrets).
+// Se a connection string não for encontrada, uma exceção é lançada para evitar erros silenciosos.
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
+    ?? throw new InvalidOperationException("Connection string 'DefaultConnection' não encontrada.");
 
-// registra o DbContext usando SQL Server
+// Registra o AppDbContext no sistema de injeção de dependências do ASP.NET Core.
+// O DbContext será criado automaticamente para cada requisição e injetado nos endpoints.
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlServer(connectionString));
+    options.UseSqlServer(connectionString)); // Configura o EF Core para usar SQL Server
 
+// ========================================
+// CONSTRUÇÃO DA APLICAÇÃO
+// ========================================
+
+// Constrói a aplicação com base nas configurações do builder.
 var app = builder.Build();
 
-app.UseDefaultFiles(); // procura index.html
-app.UseStaticFiles();  // permite servir arquivos de wwwroot
+// ========================================
+// CONFIGURAÇÃO DO PIPELINE DE REQUISIÇÕES
+// ========================================
 
-// ===== API ENDPOINTS =====
+// UseDefaultFiles: Configura o servidor para servir arquivos padrão (como index.html)
+// quando o usuário acessa a raiz do site (ex: http://localhost:5000/).
+app.UseDefaultFiles();
 
-// GET /api/clientes - Listar todos os clientes
-app.MapGet("/api/clientes", async (AppDbContext db) =>
-    await db.Clientes.OrderBy(c => c.Id).ToListAsync());
+// UseStaticFiles: Habilita o servidor a servir arquivos estáticos da pasta wwwroot
+// (HTML, CSS, JavaScript, imagens, etc.).
+app.UseStaticFiles();
 
-// GET /api/clientes/{id} - Buscar cliente por ID
-app.MapGet("/api/clientes/{id:int}", async (int id, AppDbContext db) =>
-{
-    var cliente = await db.Clientes.FindAsync(id);
-    return cliente is not null ? Results.Ok(cliente) : Results.NotFound();
-});
+// ========================================
+// MAPEAMENTO DOS ENDPOINTS DA API
+// ========================================
 
-// POST /api/clientes - Criar novo cliente
-app.MapPost("/api/clientes", async (Cliente cliente, AppDbContext db) =>
-{
-    if (string.IsNullOrWhiteSpace(cliente.Nome))
-    {
-        return Results.BadRequest("Nome é obrigatório.");
-    }
+// Chama o método de extensão que registra todos os endpoints relacionados a Clientes.
+// Isso mantém o Program.cs limpo e organiza os endpoints em arquivos separados.
+app.MapClientesEndpoints();
 
-    db.Clientes.Add(cliente);
-    await db.SaveChangesAsync();
-    return Results.Created($"/api/clientes/{cliente.Id}", cliente);
-});
+// ========================================
+// INICIALIZAÇÃO DO SERVIDOR
+// ========================================
 
-// PUT /api/clientes/{id} - Atualizar cliente existente
-app.MapPut("/api/clientes/{id:int}", async (int id, Cliente clienteAtualizado, AppDbContext db) =>
-{
-    var cliente = await db.Clientes.FindAsync(id);
-    if (cliente is null)
-    {
-        return Results.NotFound();
-    }
-
-    if (string.IsNullOrWhiteSpace(clienteAtualizado.Nome))
-    {
-        return Results.BadRequest("Nome é obrigatório.");
-    }
-
-    cliente.Nome = clienteAtualizado.Nome;
-    cliente.Endereco = clienteAtualizado.Endereco;
-    cliente.Idade = clienteAtualizado.Idade;
-    cliente.Telefone = clienteAtualizado.Telefone;
-
-    await db.SaveChangesAsync();
-    return Results.Ok(cliente);
-});
-
-// DELETE /api/clientes/{id} - Deletar cliente
-app.MapDelete("/api/clientes/{id:int}", async (int id, AppDbContext db) =>
-{
-    var cliente = await db.Clientes.FindAsync(id);
-    if (cliente is null)
-    {
-        return Results.NotFound();
-    }
-
-    db.Clientes.Remove(cliente);
-    await db.SaveChangesAsync();
-    return Results.NoContent();
-});
-
+// Inicia o servidor Kestrel e começa a escutar as requisições HTTP.
+// A aplicação ficará em execução até ser interrompida (Ctrl+C).
 app.Run();

@@ -1,0 +1,17 @@
+graph TD
+    A[Browser] -->|Requisições HTTP| B(Kestrel Web Server);
+    B -->|Serve Arquivos Estáticos| C{wwwroot};
+    C -->|HTML, CSS, JS| A;
+    B -->|Chama Endpoints| D(API Endpoints);
+    D -->|Usa| E{EF Core DbContext};
+    E -->|Acessa| F[(SQL Server Database)];
+
+    subgraph "ASP.NET Core Backend"
+        B
+        D
+        E
+    end
+
+    subgraph "Frontend"
+        C
+    end

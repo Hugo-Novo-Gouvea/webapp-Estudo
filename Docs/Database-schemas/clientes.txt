@@ -1,7 +1,10 @@
 Tabela: dbo.clientes
 -------------------------------------------------
-id        int             PK, NOT NULL
-nome      nvarchar(200)   NOT NULL
-endereco  nvarchar(200)   NULL
-idade     int             NULL
-telefone  nvarchar(30)    NULL
+id                 int             PK, NOT NULL
+nome               nvarchar(200)   NOT NULL
+endereco           nvarchar(200)   NULL
+idade              int             NULL
+telefone           nvarchar(30)    NULL
+dataCadastro       datetime2(0)    NOT NULL
+dataUltimoRegistro datetime2(0)    NOT NULL
+deletado           bit             NOT NULL
