@@ -190,7 +190,7 @@ public static class ClientesEndpoints
 
             // Marca o cliente como deletado (soft delete)
             c.Deletado = true;
-            c.DataUltimoRegistro = DateTime.UtcNow; // Atualiza a data do último registro
+            c.DataUltimoRegistro = DateTime.Now; // Atualiza a data do último registro
 
             // Salva as alterações no banco de dados
             await db.SaveChangesAsync();
